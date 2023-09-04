@@ -8,6 +8,7 @@ public class MovementModule : BaseModule
     [Header("Character configuration")]
     [SerializeField] protected BaseCharacter character;
     protected bool moving = false;
+    protected bool jumping = false;
 
     protected virtual void Awake()
     {
@@ -37,6 +38,16 @@ public class MovementModule : BaseModule
     }
 
     protected virtual void Jump()
+    {
+        
+    }
+
+    protected virtual void CancelMove()
+    {
+        
+    }
+
+    protected virtual void CancelJump()
     {
         
     }

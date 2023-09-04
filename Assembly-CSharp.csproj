@@ -42,23 +42,27 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Core\BaseCharacter.cs" />
+     <Compile Include="Assets\Scripts\Core\PlatformControllableModule.cs" />
      <Compile Include="Assets\Scripts\Core\BaseGameController.cs" />
-     <Compile Include="Assets\Scripts\Core\CHARACTER_STATE.cs" />
      <Compile Include="Assets\Scripts\Core\BaseSingleton.cs" />
      <Compile Include="Assets\Scripts\Core\TimedEvents.cs" />
      <Compile Include="Assets\Configuration\Input\CustomInput.cs" />
-     <Compile Include="Assets\Scripts\Core\PlatformControllableModule.cs" />
      <Compile Include="Assets\Scripts\Core\InputModule.cs" />
-     <Compile Include="Assets\Scripts\Core\MovementModule.cs" />
+     <Compile Include="Assets\Scripts\Core\CHARACTER_STATE.cs" />
      <Compile Include="Assets\Scripts\Core\BaseModule.cs" />
      <Compile Include="Assets\Scripts\PlayerMovementModule.cs" />
+     <Compile Include="Assets\Scripts\Core\MovementModule.cs" />
+     <Compile Include="Assets\Scripts\Core\CollisionModule.cs" />
      <Folder Include="Assets" />
      <Folder Include="Assets\Scripts\Core" />
      <Folder Include="Assets\Configuration\Input" />
+     <Folder Include="Assets\Resources\Animations" />
      <Folder Include="Assets\Scenes" />
+     <Folder Include="Assets\Resources\Timelines\Kevin" />
      <Folder Include="Assets\Scripts" />
      <Folder Include="Assets\Configuration" />
      <Folder Include="Assets\Resources" />
+     <Folder Include="Assets\Resources\Timelines" />
      <Folder Include="Assets\Resources\Imports" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.21f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
@@ -723,6 +727,9 @@
      <Reference Include="Unity.Burst.Editor">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.Burst.Editor.dll</HintPath>
      </Reference>
+     <Reference Include="Unity.Searcher.Editor">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.Searcher.Editor.dll</HintPath>
+     </Reference>
      <Reference Include="Unity.2D.IK.Editor">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.2D.IK.Editor.dll</HintPath>
      </Reference>
@@ -735,8 +742,8 @@
      <Reference Include="Unity.2D.Path.Editor">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.2D.Path.Editor.dll</HintPath>
      </Reference>
-     <Reference Include="Unity.InternalAPIEditorBridge.001">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.InternalAPIEditorBridge.001.dll</HintPath>
+     <Reference Include="Unity.RenderPipelines.Core.Runtime">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="UnityEditor.UI">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
@@ -747,11 +754,17 @@
      <Reference Include="Unity.Rider.Editor">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
      </Reference>
-     <Reference Include="Unity.PlasticSCM.Editor">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
+     <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
      </Reference>
      <Reference Include="UnityEngine.UI">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.PlasticSCM.Editor">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
+     </Reference>
+     <Reference Include="Unity.InternalAPIEditorBridge.001">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.InternalAPIEditorBridge.001.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Mathematics">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
@@ -759,8 +772,17 @@
      <Reference Include="Unity.2D.IK.Runtime">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.2D.IK.Runtime.dll</HintPath>
      </Reference>
+     <Reference Include="Unity.ShaderGraph.Editor">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.ShaderGraph.Editor.dll</HintPath>
+     </Reference>
+     <Reference Include="Cinemachine">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Cinemachine.dll</HintPath>
+     </Reference>
      <Reference Include="Unity.Burst">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.Burst.dll</HintPath>
+     </Reference>
+     <Reference Include="com.unity.cinemachine.editor">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\com.unity.cinemachine.editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Animation.Runtime">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.2D.Animation.Runtime.dll</HintPath>
@@ -774,6 +796,9 @@
      <Reference Include="Unity.Timeline.Editor">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
      </Reference>
+     <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
+     </Reference>
      <Reference Include="Unity.Mathematics.Editor">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.Mathematics.Editor.dll</HintPath>
      </Reference>
@@ -786,35 +811,14 @@
      <Reference Include="Unity.2D.Common.Editor">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.2D.Common.Editor.dll</HintPath>
      </Reference>
+     <Reference Include="Unity.RenderPipelines.Core.Editor">
+     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.dll</HintPath>
+     </Reference>
      <Reference Include="Unity.2D.SpriteShape.Runtime">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.2D.SpriteShape.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="Unity.SysrootPackage.Editor">
      <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.SysrootPackage.Editor.dll</HintPath>
-     </Reference>
-     <Reference Include="com.unity.cinemachine.editor">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\com.unity.cinemachine.editor.dll</HintPath>
-     </Reference>
-     <Reference Include="Cinemachine">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Cinemachine.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.RenderPipelines.Core.Runtime">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.Searcher.Editor">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.Searcher.Editor.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.RenderPipelines.Core.Editor">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
-     </Reference>
-     <Reference Include="Unity.ShaderGraph.Editor">
-     <HintPath>D:\Projetos\Pessoal\kirks-temple-of-hope\Library\ScriptAssemblies\Unity.ShaderGraph.Editor.dll</HintPath>
      </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,9 @@ public class PlatformControllableModule : InputModule
 {
     protected float horizontalAxis;
     public event Action EvtOnMove;
+    public event Action EvtOnCancelMove;
     public event Action EvtOnJump;
+    public event Action EvtOnCancelJump;
 
     public float HorizontalAxis
     {
@@ -22,6 +24,19 @@ public class PlatformControllableModule : InputModule
     {
         this.customInput.gameplay.move.performed += MoveOnPerformed;
         this.customInput.gameplay.jump.performed += JumpOnPerformed;
+        
+        this.customInput.gameplay.move.canceled += MoveOnCanceled;
+        this.customInput.gameplay.jump.canceled += JumpOnCanceled;
+    }
+
+    private void JumpOnCanceled(InputAction.CallbackContext obj)
+    {
+        OnCancelJump();
+    }
+
+    private void MoveOnCanceled(InputAction.CallbackContext obj)
+    {
+        OnCancelMove();
     }
 
     protected override void OnDestroy()
@@ -29,6 +44,8 @@ public class PlatformControllableModule : InputModule
         base.OnDestroy();
         this.customInput.gameplay.move.performed -= MoveOnPerformed;
         this.customInput.gameplay.jump.performed -= JumpOnPerformed;
+        this.customInput.gameplay.move.canceled -= MoveOnCanceled;
+        this.customInput.gameplay.jump.canceled -= JumpOnCanceled;
     }
 
     protected virtual void JumpOnPerformed(InputAction.CallbackContext obj)
@@ -50,5 +67,15 @@ public class PlatformControllableModule : InputModule
     protected virtual void OnJump()
     {
         this.EvtOnJump?.Invoke();
+    }
+
+    protected virtual void OnCancelMove()
+    {
+        this.EvtOnCancelMove?.Invoke();
+    }
+
+    protected virtual void OnCancelJump()
+    {
+        this.EvtOnCancelJump?.Invoke();
     }
 }
