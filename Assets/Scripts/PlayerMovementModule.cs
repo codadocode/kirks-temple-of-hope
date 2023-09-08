@@ -140,6 +140,7 @@ public class PlayerMovementModule : MovementModule
 
     private void ProcessAirMovement()
     {
+        this.horizontalAxis = this.controllableModule.HorizontalAxis;
         Vector3 direction = new Vector3(this.horizontalAxis, 0, 0);
         this.rb.AddForceAtPosition(10 * direction, this.airRotationPivot.position);
     }

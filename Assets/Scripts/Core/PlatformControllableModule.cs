@@ -71,6 +71,7 @@ public class PlatformControllableModule : InputModule
 
     protected virtual void OnCancelMove()
     {
+        this.horizontalAxis = 0;
         this.EvtOnCancelMove?.Invoke();
     }
 
