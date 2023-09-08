@@ -18,8 +18,12 @@ public class PlayerMovementModule : MovementModule
     [SerializeField] protected Rigidbody2D rb;
     [Header("Colliders configuration")]
     [SerializeField] protected Collider2D jumpResetCollider2D;
+
+    [Header("Pivot configuration")]
+    [SerializeField] protected Transform airRotationPivot;
     protected float horizontalAxis;
     protected Vector3 lastRbVelocity;
+    protected Vector3 airDirection;
     
     public float HorizontalAxis => this.horizontalAxis;
 
@@ -31,6 +35,17 @@ public class PlayerMovementModule : MovementModule
         this.controllableModule.EvtOnJump += Jump;
         this.controllableModule.EvtOnCancelJump += CancelJump;
         this.collisionModule.EvtTriggerEnter2D += CollisionModuleOnEvtTriggerEnter2D;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            this.rb.rotation = 0;
+            Vector2 position = this.rb.position;
+            position.y -= 0.5f;
+            this.rb.position = position;
+        }
     }
 
     protected override void OnDestroy()
@@ -52,6 +67,7 @@ public class PlayerMovementModule : MovementModule
     {
         if (!this.jumping) return;
         this.jumping = false;
+        this.lastRbVelocity = Vector2.zero;
     }
 
     protected override void Move()
@@ -106,14 +122,9 @@ public class PlayerMovementModule : MovementModule
         if (jumping) return;
         
         this.jumping = true;
-        Vector3 direction = new Vector3(this.horizontalAxis, 0, 0);
-        this.rb.AddForceAtPosition(Vector2.up * this.jumpForce, this.rb.position);
-        this.rb.AddForceAtPosition(direction * airRotationForce, this.rb.position);
-    }
-
-    private void Update()
-    {
-        
+        this.airDirection = new Vector3(this.horizontalAxis, 0, 0);
+        this.rb.AddForce(Vector2.up * this.jumpForce);
+        this.rb.AddForceAtPosition(this.airDirection * airRotationForce, this.rb.position);
     }
 
     private void ProcessGroundMovement()
@@ -130,7 +141,7 @@ public class PlayerMovementModule : MovementModule
     private void ProcessAirMovement()
     {
         Vector3 direction = new Vector3(this.horizontalAxis, 0, 0);
-        this.rb.AddForceAtPosition(direction * this.rb.velocity, this.rb.position);
+        this.rb.AddForceAtPosition(10 * direction, this.airRotationPivot.position);
     }
 
     private void FixedUpdate()

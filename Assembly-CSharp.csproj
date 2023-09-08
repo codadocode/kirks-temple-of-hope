@@ -51,8 +51,8 @@
      <Compile Include="Assets\Scripts\Core\CHARACTER_STATE.cs" />
      <Compile Include="Assets\Scripts\Core\BaseModule.cs" />
      <Compile Include="Assets\Scripts\PlayerMovementModule.cs" />
-     <Compile Include="Assets\Scripts\Core\MovementModule.cs" />
      <Compile Include="Assets\Scripts\Core\CollisionModule.cs" />
+     <Compile Include="Assets\Scripts\Core\MovementModule.cs" />
      <Folder Include="Assets" />
      <Folder Include="Assets\Scripts\Core" />
      <Folder Include="Assets\Configuration\Input" />
