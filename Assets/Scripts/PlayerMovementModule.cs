@@ -9,9 +9,11 @@ public class PlayerMovementModule : MovementModule
 {
     [Header("Configuration")] 
     [SerializeField] protected float acceleration = 5;
-    [SerializeField] protected float maxHorizontalSpeed = 100;
+    [SerializeField] protected float maxGroundedHorizontalVelocity = 100;
+    [SerializeField] protected float maxAirHorizontalVelocity = 5;
     [SerializeField] protected float airRotationForce = 100;
     [SerializeField] protected float jumpForce = 10;
+    [SerializeField] protected float airMovementRotationForce = 10;
     [SerializeField] protected PlatformControllableModule controllableModule;
     [SerializeField] protected PlayableDirector director;
     [SerializeField] protected CollisionModule collisionModule;
@@ -35,6 +37,15 @@ public class PlayerMovementModule : MovementModule
         this.controllableModule.EvtOnJump += Jump;
         this.controllableModule.EvtOnCancelJump += CancelJump;
         this.collisionModule.EvtTriggerEnter2D += CollisionModuleOnEvtTriggerEnter2D;
+        this.collisionModule.EvtTriggerExit2D += CollisionModuleOnEvtTriggerExit2D;
+    }
+
+    private void CollisionModuleOnEvtTriggerExit2D(Collider2D obj)
+    {
+        if (obj.gameObject.tag.Equals("Ground") && !obj.IsTouching(this.jumpResetCollider2D))
+        {
+            ToggleGroundState(false);
+        }
     }
 
     private void Update()
@@ -43,7 +54,7 @@ public class PlayerMovementModule : MovementModule
         {
             this.rb.rotation = 0;
             Vector2 position = this.rb.position;
-            position.y -= 0.5f;
+            position.y += 0.5f;
             this.rb.position = position;
         }
     }
@@ -56,18 +67,20 @@ public class PlayerMovementModule : MovementModule
         this.controllableModule.EvtOnJump -= Jump;
         this.controllableModule.EvtOnCancelJump -= CancelJump;
         this.collisionModule.EvtTriggerEnter2D -= CollisionModuleOnEvtTriggerEnter2D;
+        this.collisionModule.EvtTriggerExit2D -= CollisionModuleOnEvtTriggerExit2D;
     }
 
     private void CollisionModuleOnEvtTriggerEnter2D(Collider2D obj)
     {
-        if (obj.gameObject.tag.Equals("Ground") && obj.IsTouching(this.jumpResetCollider2D)) ResetJump();
+        if (obj.gameObject.tag.Equals("Ground") && obj.IsTouching(this.jumpResetCollider2D))
+        {
+            ToggleGroundState(true);
+        }
     }
 
-    private void ResetJump()
+    private void ToggleGroundState(bool groundedState)
     {
-        if (!this.jumping) return;
-        this.jumping = false;
-        this.lastRbVelocity = Vector2.zero;
+        this.grounded = groundedState;
     }
 
     protected override void Move()
@@ -100,7 +113,7 @@ public class PlayerMovementModule : MovementModule
         this.character.State = CHARACTER_STATE.IDLE;
         this.moving = false;
 
-        if (!jumping)
+        if (grounded)
         {
             this.lastRbVelocity = this.rb.velocity;
             this.rb.velocity = Vector2.zero;
@@ -119,12 +132,12 @@ public class PlayerMovementModule : MovementModule
     protected override void Jump()
     {
         base.Jump();
-        if (jumping) return;
+        if (!grounded) return;
         
-        this.jumping = true;
+        this.grounded = false;
         this.airDirection = new Vector3(this.horizontalAxis, 0, 0);
         this.rb.AddForce(Vector2.up * this.jumpForce);
-        this.rb.AddForceAtPosition(this.airDirection * airRotationForce, this.rb.position);
+        //this.rb.AddForceAtPosition(this.airDirection * airRotationForce, this.rb.position);
     }
 
     private void ProcessGroundMovement()
@@ -134,20 +147,28 @@ public class PlayerMovementModule : MovementModule
         Vector3 direction = new Vector3(this.horizontalAxis, 0, 0);
         Vector2 velocity = (direction * this.acceleration * Time.deltaTime);
         Vector2 finalVelocity = this.rb.velocity + velocity;
-        finalVelocity.x = Mathf.Clamp(finalVelocity.x, -this.maxHorizontalSpeed, this.maxHorizontalSpeed);
+        finalVelocity.x = Mathf.Clamp(finalVelocity.x, -this.maxGroundedHorizontalVelocity, this.maxGroundedHorizontalVelocity);
         this.rb.velocity = finalVelocity;
     }
 
     private void ProcessAirMovement()
     {
+        Vector3 actualVelocity = this.rb.velocity;
         this.horizontalAxis = this.controllableModule.HorizontalAxis;
         Vector3 direction = new Vector3(this.horizontalAxis, 0, 0);
-        this.rb.AddForceAtPosition(10 * direction, this.airRotationPivot.position);
+        this.rb.AddForceAtPosition(airMovementRotationForce * direction, this.airRotationPivot.position);
+
+        float clampedHorizontalVelocity = this.rb.velocity.x;
+        clampedHorizontalVelocity = Mathf.Clamp(clampedHorizontalVelocity, -maxAirHorizontalVelocity, maxAirHorizontalVelocity);
+        
+        Vector3 clampedVelocity = actualVelocity;
+        clampedVelocity.x = clampedHorizontalVelocity;
+        this.rb.velocity = clampedVelocity;
     }
 
     private void FixedUpdate()
     {
-        if (!this.jumping) ProcessGroundMovement();
+        if (this.grounded) ProcessGroundMovement();
         else ProcessAirMovement();
     }
 }
