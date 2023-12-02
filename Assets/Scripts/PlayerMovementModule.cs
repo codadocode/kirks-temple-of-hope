@@ -14,7 +14,7 @@ public class PlayerMovementModule : MovementModule
     [SerializeField] protected float airRotationForce = 100;
     [SerializeField] protected float jumpForce = 10;
     [SerializeField] protected float airMovementRotationForce = 10;
-    [SerializeField] protected PlatformControllableModule controllableModule;
+    [SerializeField] protected GamePlataformControllableModule controllableModule;
     [SerializeField] protected PlayableDirector director;
     [SerializeField] protected CollisionModule collisionModule;
     [SerializeField] protected Rigidbody2D rb;
@@ -36,8 +36,20 @@ public class PlayerMovementModule : MovementModule
         this.controllableModule.EvtOnCancelMove += CancelMove;
         this.controllableModule.EvtOnJump += Jump;
         this.controllableModule.EvtOnCancelJump += CancelJump;
+        this.controllableModule.EvtOnTurnUp += TurnUp;
+        this.controllableModule.EvtOnCancelTurnUp += CancelTurnUp;
         this.collisionModule.EvtTriggerEnter2D += CollisionModuleOnEvtTriggerEnter2D;
         this.collisionModule.EvtTriggerExit2D += CollisionModuleOnEvtTriggerExit2D;
+    }
+
+    private void CancelTurnUp()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void TurnUp()
+    {
+        throw new NotImplementedException();
     }
 
     private void CollisionModuleOnEvtTriggerExit2D(Collider2D obj)
@@ -45,6 +57,7 @@ public class PlayerMovementModule : MovementModule
         if (obj.gameObject.tag.Equals("Ground") && !obj.IsTouching(this.jumpResetCollider2D))
         {
             ToggleGroundState(false);
+            //this.rb.gameObject.transform.SetParent(null);
         }
     }
 
@@ -75,6 +88,7 @@ public class PlayerMovementModule : MovementModule
         if (obj.gameObject.tag.Equals("Ground") && obj.IsTouching(this.jumpResetCollider2D))
         {
             ToggleGroundState(true);
+            //this.rb.gameObject.transform.SetParent(obj.transform, true);
         }
     }
 
