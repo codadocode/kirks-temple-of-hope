@@ -48,13 +48,13 @@
      <Compile Include="Assets\Scripts\Core\BaseSingleton.cs" />
      <Compile Include="Assets\Scripts\Core\TimedEvents.cs" />
      <Compile Include="Assets\Configuration\Input\CustomInput.cs" />
+     <Compile Include="Assets\Scripts\GamePlataformControllableModule.cs" />
      <Compile Include="Assets\Scripts\Core\InputModule.cs" />
      <Compile Include="Assets\Scripts\Core\CHARACTER_STATE.cs" />
      <Compile Include="Assets\Scripts\Core\BaseModule.cs" />
      <Compile Include="Assets\Scripts\PlayerMovementModule.cs" />
      <Compile Include="Assets\Scripts\Core\CollisionModule.cs" />
      <Compile Include="Assets\Scripts\Core\MovementModule.cs" />
-     <Compile Include="Assets\Scripts\GamePlataformControllableModule.cs" />
      <Folder Include="Assets" />
      <Folder Include="Assets\Scripts\Core" />
      <Folder Include="Assets\Configuration\Input" />

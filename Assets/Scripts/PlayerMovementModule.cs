@@ -11,7 +11,6 @@ public class PlayerMovementModule : MovementModule
     [SerializeField] protected float acceleration = 5;
     [SerializeField] protected float maxGroundedHorizontalVelocity = 100;
     [SerializeField] protected float maxAirHorizontalVelocity = 5;
-    [SerializeField] protected float airRotationForce = 100;
     [SerializeField] protected float jumpForce = 10;
     [SerializeField] protected float airMovementRotationForce = 10;
     [SerializeField] protected GamePlataformControllableModule controllableModule;
