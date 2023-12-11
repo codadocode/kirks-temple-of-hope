@@ -19,12 +19,22 @@ public class PlayerMovementModule : MovementModule
     [SerializeField] protected Rigidbody2D rb;
     [Header("Colliders configuration")]
     [SerializeField] protected Collider2D jumpResetCollider2D;
+    [SerializeField] protected Collider2D rightCollider2DTop;
+    [SerializeField] protected Collider2D rightCollider2DBottom;
+    [SerializeField] protected Collider2D leftCollider2DTop;
+    [SerializeField] protected Collider2D leftCollider2DBottom;
+    [SerializeField] protected Collider2D headLeftColider2D;
+    [SerializeField] protected Collider2D headRightColider2D;
+    [Header("UI Configuration")]
+    [SerializeField] protected FillBarManager fillBarManager;
+    [SerializeField] protected float turnUpValueToAdd = 5f;
 
     [Header("Pivot configuration")]
     [SerializeField] protected Transform airRotationPivot;
     protected float horizontalAxis;
     protected Vector3 lastRbVelocity;
     protected Vector3 airDirection;
+    public bool stuck = false;
     
     public float HorizontalAxis => this.horizontalAxis;
 
@@ -39,35 +49,38 @@ public class PlayerMovementModule : MovementModule
         this.controllableModule.EvtOnCancelTurnUp += CancelTurnUp;
         this.collisionModule.EvtTriggerEnter2D += CollisionModuleOnEvtTriggerEnter2D;
         this.collisionModule.EvtTriggerExit2D += CollisionModuleOnEvtTriggerExit2D;
+        this.fillBarManager.OnBarCompleteEvent += Unstuck;
     }
 
     private void CancelTurnUp()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     private void TurnUp()
     {
-        throw new NotImplementedException();
+        this.fillBarManager.Interact(turnUpValueToAdd);
+    }
+
+    private void Unstuck()
+    {
+        this.rb.rotation = 0;
+        Vector2 position = this.rb.position;
+        position.y += 0.5f;
+        this.rb.position = position;
     }
 
     private void CollisionModuleOnEvtTriggerExit2D(Collider2D obj)
     {
-        if (obj.gameObject.tag.Equals("Ground") && !obj.IsTouching(this.jumpResetCollider2D))
+        string objTag = obj.gameObject.tag;
+        switch (objTag)
         {
-            ToggleGroundState(false);
-            //this.rb.gameObject.transform.SetParent(null);
-        }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            this.rb.rotation = 0;
-            Vector2 position = this.rb.position;
-            position.y += 0.5f;
-            this.rb.position = position;
+            case "Ground":
+                if (!obj.IsTouching(this.jumpResetCollider2D))
+                {
+                    ToggleGroundState(false);
+                }
+                break;
         }
     }
 
@@ -78,22 +91,55 @@ public class PlayerMovementModule : MovementModule
         this.controllableModule.EvtOnCancelMove -= CancelMove;
         this.controllableModule.EvtOnJump -= Jump;
         this.controllableModule.EvtOnCancelJump -= CancelJump;
+        this.controllableModule.EvtOnTurnUp -= TurnUp;
+        this.controllableModule.EvtOnCancelTurnUp -= CancelTurnUp;
         this.collisionModule.EvtTriggerEnter2D -= CollisionModuleOnEvtTriggerEnter2D;
         this.collisionModule.EvtTriggerExit2D -= CollisionModuleOnEvtTriggerExit2D;
+        this.fillBarManager.OnBarCompleteEvent -= Unstuck;
     }
 
     private void CollisionModuleOnEvtTriggerEnter2D(Collider2D obj)
     {
-        if (obj.gameObject.tag.Equals("Ground") && obj.IsTouching(this.jumpResetCollider2D))
+        string objTag = obj.tag;
+        switch (objTag)
         {
-            ToggleGroundState(true);
-            //this.rb.gameObject.transform.SetParent(obj.transform, true);
+            case "Ground":
+                if (objTag.Equals("Ground") && obj.IsTouching(this.jumpResetCollider2D))
+                {
+                    ToggleStuckState(false);
+                    ToggleGroundState(true);
+                }
+
+                if (CheckStuck(obj))
+                {
+                    ToggleStuckState(true);
+                    ToggleGroundState(false);
+                }
+                
+                break;
         }
+    }
+
+    private bool CheckStuck(Collider2D obj)
+    {
+        bool isStuck = !obj.IsTouching(jumpResetCollider2D) && 
+                       ((obj.IsTouching(this.rightCollider2DBottom) && obj.IsTouching(this.rightCollider2DTop)) || 
+                        (obj.IsTouching(leftCollider2DBottom) && obj.IsTouching(leftCollider2DTop)) || (obj.IsTouching(this.headLeftColider2D) && obj.IsTouching(this.headRightColider2D)));
+        return isStuck;
     }
 
     private void ToggleGroundState(bool groundedState)
     {
         this.grounded = groundedState;
+    }
+
+    private void ToggleStuckState(bool stuckState)
+    {
+        this.stuck = stuckState;
+        if (stuck)
+        {
+            this.fillBarManager.ToggleCanInteract(true);
+        }
     }
 
     protected override void Move()
@@ -181,6 +227,7 @@ public class PlayerMovementModule : MovementModule
 
     private void FixedUpdate()
     {
+        if (stuck) return;
         if (this.grounded) ProcessGroundMovement();
         else ProcessAirMovement();
     }
