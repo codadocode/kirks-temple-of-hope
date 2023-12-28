@@ -38,6 +38,8 @@ public class PlayerMovementModule : MovementModule
     
     public float HorizontalAxis => this.horizontalAxis;
 
+    private ColliderGroupData<Collider2D> groundColliders;
+
     protected override void Awake()
     {
         base.Awake();
@@ -50,6 +52,11 @@ public class PlayerMovementModule : MovementModule
         this.collisionModule.EvtTriggerEnter2D += CollisionModuleOnEvtTriggerEnter2D;
         this.collisionModule.EvtTriggerExit2D += CollisionModuleOnEvtTriggerExit2D;
         this.fillBarManager.OnBarCompleteEvent += Unstuck;
+    }
+
+    protected void Start()
+    {
+        this.groundColliders = new ColliderGroupData<Collider2D>(new[] { "Ground" });
     }
 
     private void CancelTurnUp()
@@ -66,8 +73,11 @@ public class PlayerMovementModule : MovementModule
     {
         this.rb.rotation = 0;
         Vector2 position = this.rb.position;
-        position.y += 0.5f;
+        position.y += 1f;
         this.rb.position = position;
+        ToggleGroundState(true);
+        ToggleStuckState(false);
+        this.groundColliders.ResetColliderGroupData();
     }
 
     private void CollisionModuleOnEvtTriggerExit2D(Collider2D obj)
@@ -76,10 +86,7 @@ public class PlayerMovementModule : MovementModule
         switch (objTag)
         {
             case "Ground":
-                if (!obj.IsTouching(this.jumpResetCollider2D))
-                {
-                    ToggleGroundState(false);
-                }
+                this.groundColliders.RemoveCollider(obj);
                 break;
         }
     }
@@ -104,12 +111,8 @@ public class PlayerMovementModule : MovementModule
         switch (objTag)
         {
             case "Ground":
-                if (objTag.Equals("Ground") && obj.IsTouching(this.jumpResetCollider2D))
-                {
-                    ToggleStuckState(false);
-                    ToggleGroundState(true);
-                }
-
+                this.groundColliders.AddCollider(obj);
+                
                 if (CheckStuck(obj))
                 {
                     ToggleStuckState(true);
@@ -125,6 +128,7 @@ public class PlayerMovementModule : MovementModule
         bool isStuck = !obj.IsTouching(jumpResetCollider2D) && 
                        ((obj.IsTouching(this.rightCollider2DBottom) && obj.IsTouching(this.rightCollider2DTop)) || 
                         (obj.IsTouching(leftCollider2DBottom) && obj.IsTouching(leftCollider2DTop)) || (obj.IsTouching(this.headLeftColider2D) && obj.IsTouching(this.headRightColider2D)));
+        
         return isStuck;
     }
 
@@ -227,8 +231,25 @@ public class PlayerMovementModule : MovementModule
 
     private void FixedUpdate()
     {
+        CheckColliders();
+        
         if (stuck) return;
         if (this.grounded) ProcessGroundMovement();
         else ProcessAirMovement();
+    }
+
+    private void CheckColliders()
+    {
+        if (this.stuck) return;
+        
+        if (this.groundColliders.FindTag("Ground"))
+        {
+            ToggleStuckState(false);
+            ToggleGroundState(true);
+        }
+        else
+        {
+            ToggleGroundState(false);
+        }
     }
 }

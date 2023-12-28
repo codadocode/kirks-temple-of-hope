@@ -14,15 +14,15 @@ public class CollisionModule : BaseModule
     {
         this.EvtCollisionEnter2D?.Invoke(other);
     }
+    
+    protected virtual void OnCollisionExit2D(Collision2D other)
+    {
+        this.EvtCollisionExit2D?.Invoke(other);
+    }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
         this.EvtTriggerEnter2D?.Invoke(other);
-    }
-
-    protected virtual void OnCollisionExit2D(Collision2D other)
-    {
-        this.EvtCollisionExit2D?.Invoke(other);
     }
 
     private void OnTriggerExit2D(Collider2D other)
