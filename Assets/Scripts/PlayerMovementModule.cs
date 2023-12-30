@@ -19,6 +19,12 @@ public class PlayerMovementModule : MovementModule
     [SerializeField] protected Rigidbody2D rb;
     [Header("Colliders configuration")]
     [SerializeField] protected Collider2D jumpResetCollider2D;
+    [SerializeField] protected Collider2D rightCollider2DTop;
+    [SerializeField] protected Collider2D rightCollider2DBottom;
+    [SerializeField] protected Collider2D leftCollider2DTop;
+    [SerializeField] protected Collider2D leftCollider2DBottom;
+    [SerializeField] protected Collider2D headLeftColider2D;
+    [SerializeField] protected Collider2D headRightColider2D;
     [Header("UI Configuration")]
     [SerializeField] protected FillBarManager fillBarManager;
     [SerializeField] protected float turnUpValueToAdd = 5f;
@@ -60,16 +66,7 @@ public class PlayerMovementModule : MovementModule
 
     private void TurnUp()
     {
-        if (this.grounded) return;
-        
-        if (this.stuck)
-        {
-            this.fillBarManager.Interact(turnUpValueToAdd);
-        }
-        else
-        {
-            this.ToggleStuckState(true);
-        }
+        this.fillBarManager.Interact(turnUpValueToAdd);
     }
 
     private void Unstuck()
@@ -114,11 +111,25 @@ public class PlayerMovementModule : MovementModule
         switch (objTag)
         {
             case "Ground":
-                if (!this.jumpResetCollider2D.IsTouching(obj)) return;
                 this.groundColliders.AddCollider(obj);
+                
+                if (CheckStuck(obj))
+                {
+                    ToggleStuckState(true);
+                    ToggleGroundState(false);
+                }
                 
                 break;
         }
+    }
+
+    private bool CheckStuck(Collider2D obj)
+    {
+        bool isStuck = !obj.IsTouching(jumpResetCollider2D) && 
+                       ((obj.IsTouching(this.rightCollider2DBottom) && obj.IsTouching(this.rightCollider2DTop)) || 
+                        (obj.IsTouching(leftCollider2DBottom) && obj.IsTouching(leftCollider2DTop)) || (obj.IsTouching(this.headLeftColider2D) && obj.IsTouching(this.headRightColider2D)));
+        
+        return isStuck;
     }
 
     private void ToggleGroundState(bool groundedState)
@@ -126,20 +137,12 @@ public class PlayerMovementModule : MovementModule
         this.grounded = groundedState;
     }
 
-    private void ToggleStuckState(bool value)
+    private void ToggleStuckState(bool stuckState)
     {
-        this.stuck = value;
+        this.stuck = stuckState;
         if (stuck)
         {
             this.fillBarManager.ToggleCanInteract(true);
-        }
-    }
-
-    protected void Update()
-    {
-        if (!this.stuck)
-        {
-            
         }
     }
 
@@ -197,6 +200,7 @@ public class PlayerMovementModule : MovementModule
         this.grounded = false;
         this.airDirection = new Vector3(this.horizontalAxis, 0, 0);
         this.rb.AddForce(Vector2.up * this.jumpForce);
+        //this.rb.AddForceAtPosition(this.airDirection * airRotationForce, this.rb.position);
     }
 
     private void ProcessGroundMovement()
@@ -215,7 +219,7 @@ public class PlayerMovementModule : MovementModule
         Vector3 actualVelocity = this.rb.velocity;
         this.horizontalAxis = this.controllableModule.HorizontalAxis;
         Vector3 direction = new Vector3(this.horizontalAxis, 0, 0);
-        this.rb.AddForceAtPosition(airMovementRotationForce * direction, this.rb.gameObject.transform.position);
+        this.rb.AddForceAtPosition(airMovementRotationForce * direction, this.airRotationPivot.position);
 
         float clampedHorizontalVelocity = this.rb.velocity.x;
         clampedHorizontalVelocity = Mathf.Clamp(clampedHorizontalVelocity, -maxAirHorizontalVelocity, maxAirHorizontalVelocity);
@@ -240,6 +244,7 @@ public class PlayerMovementModule : MovementModule
         
         if (this.groundColliders.FindTag("Ground"))
         {
+            ToggleStuckState(false);
             ToggleGroundState(true);
         }
         else
